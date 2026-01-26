@@ -218,3 +218,8 @@ body {
     font-weight: bold;
     cursor: pointer;
 }
+
+.about-link {
+    text-decoration: none;
+    color: #333;
+}
