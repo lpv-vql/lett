@@ -55,20 +55,35 @@
     document.getElementById('modal').style.display = 'none';
   }
 
-  async function loadMessages() {
-    try {
-      const res = await fetch(GAS_URL);
-      const data = await res.json();
-      const tl = document.getElementById('timeline');
-      tl.innerHTML = data.map(m => `
-        <div class="msg-card" style="border-left: 5px solid ${m[4]}">
-          <div class="msg-header"><span>${m[3]}</span><span>${m[1]}</span></div>
-          <div class="text">${m[2]}</div>
-          <div class="hash">ID: ${m[5]}</div>
-        </div>
-      `).join('');
-    } catch(e) { console.error("Error loading messages"); }
+async function loadMessages() {
+  try {
+    // redirect: "follow" を追加して、GASの転送を許可する
+    const res = await fetch(GAS_URL, {
+      method: "GET",
+      mode: "cors",
+      redirect: "follow"
+    });
+    
+    const data = await res.json();
+    const tl = document.getElementById('timeline');
+    
+    if (data.length === 0) {
+      tl.innerHTML = "まだ投稿がありません。";
+      return;
+    }
+
+    tl.innerHTML = data.map(m => `
+      <div class="msg-card" style="border-left: 5px solid ${m[4]}">
+        <div class="msg-header"><span>${m[3]}</span><span>${m[1]}</span></div>
+        <div class="text">${m[2]}</div>
+        <div class="hash">ID: ${m[5]}</div>
+      </div>
+    `).join('');
+  } catch(e) { 
+    console.error("読み込みエラー:", e); 
+    document.getElementById('timeline').innerHTML = "エラーが発生しました。";
   }
+}
 
   async function send() {
     const msg = document.getElementById('msgInput').value;
