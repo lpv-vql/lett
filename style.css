@@ -1,47 +1,64 @@
-/* 全体設定 */
+/* --- 全体設定 --- */
 body {
-    font-family: sans-serif;
+    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
     background-color: #ffffff;
     margin: 0;
-    padding-bottom: 120px;
+    padding: 0;
+    padding-bottom: 160px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    color: #333;
 }
 
+/* 投稿一覧のコンテナ */
 #timeline {
     width: 100%;
     max-width: 600px;
     padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
-/* 名前とホバー情報 */
+/* --- メッセージの構造 --- */
+.msg-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+    width: 95%;
+    max-width: 580px;
+    align-self: flex-start;
+}
+
+/* 名前部分 */
 .msg-header {
-    margin-bottom: 4px;
-    margin-left: 10px;
-    font-size: 18px;
+    margin-bottom: 6px;
+    margin-left: 12px;
+    font-size: 20px;
     font-weight: bold;
     position: relative;
     display: inline-block;
-    cursor: default;
+    cursor: pointer;
 }
 
-/* ホバー情報を下に表示するように変更 */
+/* ホバーで下に出る詳細情報 */
 .msg-header .info-pop {
     visibility: hidden;
-    background-color: rgba(51, 51, 51, 0.9);
+    background-color: rgba(0, 0, 0, 0.8);
     color: #fff;
     text-align: left;
     border-radius: 12px;
-    padding: 10px;
+    padding: 10px 15px;
     position: absolute;
     z-index: 10;
-    top: 100%;
+    top: 110%;
     left: 0;
     font-size: 14px;
+    line-height: 1.4;
     white-space: nowrap;
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s, visibility 0.2s;
     pointer-events: none;
 }
 
@@ -50,32 +67,9 @@ body {
     opacity: 1;
 }
 
-/* 入力エリアの幅とスタイル固定 */
-#msgInput {
-    flex: 1;
-    border: 2px solid #f0f0f0;
-    border-radius: 25px;
-    padding: 15px 20px;
-    font-size: 20px;
-    outline: none;
-    background: #f9f9f9;
-    resize: none;
-    height: 60px;
-    overflow-y: auto;
-    box-sizing: border-box;
-}
-
-/* メッセージの幅を広げる */
-.msg-wrapper {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 25px;
-    width: 95%;
-    max-width: 580px;
-}
-
+/* 吹き出し本体 */
 .bubble {
-    padding: 18px 25px;
+    padding: 20px 25px;
     border-radius: 30px;
     font-size: 20px;
     line-height: 1.6;
@@ -84,25 +78,62 @@ body {
     display: inline-block;
 }
 
-/* 下部入力エリア */
-#input-area {
+/* --- 下部固定入力エリア --- */
+#footer-container {
     position: fixed;
     bottom: 0;
     width: 100%;
-    max-width: 600px;
-    background: #fff;
-    padding: 15px;
+    background: #ffffff;
     display: flex;
-    align-items: center;
-    gap: 10px;
-    border-top: 2px solid #f0f0f0;
+    justify-content: center;
+    padding: 15px 0 40px 0;
+    border-top: 2px solid #f8f8f8;
+    z-index: 100;
 }
 
-/* アイコン画像ボタン */
+.input-wrapper {
+    width: 95%;
+    max-width: 580px;
+    display: flex;
+    flex-direction: column;
+}
+
+#current-user-name {
+    margin-bottom: 6px;
+    margin-left: 12px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* 入力ボックス（bubbleと同じ見た目にする） */
+.input-bubble-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 20px;
+    border-radius: 35px;
+    transition: background-color 0.3s;
+}
+
+#msgInput {
+    flex: 1;
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    line-height: 1.5;
+    outline: none;
+    resize: none;
+    height: 90px;
+    padding: 10px 0;
+    color: #000;
+}
+
+/* 画像アイコンボタン */
 .icon-btn {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     cursor: pointer;
+    flex-shrink: 0;
     transition: transform 0.1s;
 }
 
@@ -110,16 +141,82 @@ body {
     transform: scale(0.9);
 }
 
-/* 設定モーダル内の色選択（ラジオボタン用） */
+/* --- 設定モーダル --- */
+#modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 35px;
+    border-radius: 35px;
+    width: 85%;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    font-size: 24px;
+}
+
+.modal-content p {
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="password"] {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    font-size: 18px;
+    box-sizing: border-box;
+}
+
+/* 色選択肢 */
 .color-options {
     display: flex;
-    gap: 10px;
-    margin: 15px 0;
+    gap: 15px;
+    margin-bottom: 25px;
 }
+
+.color-options input {
+    display: none;
+}
+
 .color-circle {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     cursor: pointer;
-    border: 2px solid #ddd;
+    border: 3px solid transparent;
+    display: inline-block;
+    transition: transform 0.2s;
+}
+
+/* 選択された色の枠を強調 */
+.color-options input:checked + .color-circle {
+    border-color: #333;
+    transform: scale(1.1);
+}
+
+.save-btn {
+    width: 100%;
+    padding: 18px;
+    border-radius: 25px;
+    border: none;
+    background: #333;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
 }
