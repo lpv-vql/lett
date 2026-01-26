@@ -1,9 +1,9 @@
-/* 全体のレイアウト */
+/* 全体設定 */
 body {
-    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-    background-color: #7494c0;
+    font-family: sans-serif;
+    background-color: #ffffff;
     margin: 0;
-    padding-bottom: 100px;
+    padding-bottom: 120px; /* 入力欄と重ならないよう */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -11,114 +11,108 @@ body {
 
 #timeline {
     width: 100%;
-    max-width: 500px;
-    padding: 20px 10px;
+    max-width: 600px;
+    padding: 20px;
 }
 
-/* メッセージカード */
-.msg-card {
-    background: white;
-    padding: 12px 16px;
-    border-radius: 18px;
-    margin-bottom: 15px;
-    position: relative;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    max-width: 85%;
-    /* 左側に寄せる設定 */
-    align-self: flex-start;
-}
-
-/* アイコンと名前 */
-.msg-header {
+/* メッセージ1件の塊 */
+.msg-wrapper {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 5px;
+    flex-direction: column;
+    margin-bottom: 20px;
+    max-width: 85%;
 }
 
-.icon {
-    font-size: 24px;
-}
-
-.name {
+/* 名前とホバー情報 */
+.msg-header {
+    margin-bottom: 4px;
+    margin-left: 10px;
+    font-size: 18px; /* 文字大きめ */
     font-weight: bold;
-    font-size: 13px;
-    color: #333;
+    position: relative;
+    display: inline-block;
+    cursor: default;
 }
 
-/* 本文 */
-.text {
+/* ホバーで出るIDと日付 */
+.msg-header .info-pop {
+    visibility: hidden;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 10px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 0;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.msg-header:hover .info-pop {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* 吹き出し（背景色は設定から反映） */
+.bubble {
+    padding: 15px 20px;
+    border-radius: 25px; /* 丸みを強く */
+    font-size: 18px; /* 文字大きめ */
+    line-height: 1.5;
+    word-wrap: break-word;
     white-space: pre-wrap;
-    font-size: 15px;
-    color: #000;
-    line-height: 1.4;
 }
 
-/* ハッシュ表示（右下に配置） */
-.hash {
-    font-size: 9px;
-    color: #999;
-    text-align: right;
-    margin-top: 4px;
-    font-family: monospace;
-}
-
-/* 入力エリア */
+/* 下部入力エリア */
 #input-area {
     position: fixed;
     bottom: 0;
     width: 100%;
-    max-width: 500px;
+    max-width: 600px;
     background: #fff;
-    padding: 10px;
+    padding: 15px;
     display: flex;
-    align-items: flex-end;
-    gap: 10px;
-    box-sizing: border-box;
-}
-
-textarea {
-    flex: 1;
-    border: 1px solid #ddd;
-    border-radius: 20px;
-    padding: 10px 15px;
-    height: 40px;
-    font-size: 16px;
-    resize: none;
-    outline: none;
-    background: #f8f8f8;
-}
-
-/* ボタン類 */
-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 20px;
-}
-
-#sendBtn {
-    color: #00c300;
-    font-weight: bold;
-    font-size: 16px;
-    padding: 10px;
-}
-
-/* 設定モーダル */
-#modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    display: none;
     align-items: center;
-    justify-content: center;
-    z-index: 1000;
+    gap: 10px;
+    border-top: 2px solid #f0f0f0;
 }
 
-.modal-content {
-    background: white;
-    padding: 25px;
-    border-radius: 20px;
-    width: 80%;
-    max-width: 350px;
+#msgInput {
+    flex: 1;
+    border: 2px solid #f0f0f0;
+    border-radius: 25px;
+    padding: 12px 20px;
+    font-size: 18px;
+    outline: none;
+    background: #f9f9f9;
+}
+
+/* アイコン画像ボタン */
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.icon-btn:active {
+    transform: scale(0.9);
+}
+
+/* 設定モーダル内の色選択（ラジオボタン用） */
+.color-options {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+}
+.color-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #ddd;
 }
