@@ -28,17 +28,13 @@ async function loadMessages() {
     
     tl.innerHTML = data.map(m => {
         const date = new Date(m[0]).toLocaleString('ja-JP');
-        return `
-        <div class="msg-wrapper">
-            <div class="msg-header">
-                ${m[1]}
-                <span class="info-pop">ID: ${m[5]}<br>${date}</span>
-            </div>
-            <div class="bubble" style="background-color: ${m[4]}">
-                ${m[2]}
-            </div>
-        </div>
-        `;
+        // テンプレートリテラル内の改行や空白がメッセージ前に反映されないよう、trim()などを使用
+        return `<div class="msg-wrapper">` +
+            `<div class="msg-header">` +
+                `${m[1]}<span class="info-pop">ID: ${m[5]}<br>投稿日: ${date}</span>` +
+            `</div>` +
+            `<div class="bubble" style="background-color: ${m[4]}">${m[2]}</div>` +
+        `</div>`;
     }).join('');
 }
 
