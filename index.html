@@ -1,81 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>簡易SNS</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Simple SNS</title>
 </head>
 <body>
 
-<div id="timeline">読み込み中...</div>
+<div id="timeline"></div>
 
-<div id="modal">
-  <div class="modal-content">
-    <h3>設定</h3>
-    名前: <input type="text" id="name" placeholder="名無しさん">
-    アイコン: <input type="text" id="icon" placeholder="😊">
-    カラー: <input type="color" id="color" value="#00ff00">
-    防止コード: <input type="password" id="secretCode" placeholder="秘密の合言葉">
-    <button onclick="saveConfig()" style="width:100%; padding:10px; background:#007bff; color:white; border:none; border-radius:5px;">保存</button>
-  </div>
+<div id="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:100; display:flex; align-items:center; justify-content:center;">
+    <div style="background:white; padding:30px; border-radius:30px; width:80%; max-width:400px;">
+        <h2>設定</h2>
+        <p>名前:</p>
+        <input type="text" id="nameInput" style="width:100%; padding:10px; border-radius:15px; border:1px solid #ddd;">
+        
+        <p>メッセージの色:</p>
+        <div class="color-options">
+            <input type="radio" name="color" value="#e1f5fe" id="c1" checked><label for="c1" style="background:#e1f5fe;" class="color-circle"></label>
+            <input type="radio" name="color" value="#f1f8e9" id="c2"><label for="c2" style="background:#f1f8e9;" class="color-circle"></label>
+            <input type="radio" name="color" value="#fff9c4" id="c3"><label for="c3" style="background:#fff9c4;" class="color-circle"></label>
+            <input type="radio" name="color" value="#fce4ec" id="c4"><label for="c4" style="background:#fce4ec;" class="color-circle"></label>
+        </div>
+
+        <p>なりすまし防止コード:</p>
+        <input type="password" id="codeInput" style="width:100%; padding:10px; border-radius:15px; border:1px solid #ddd;">
+        
+        <button onclick="saveSettings()" style="margin-top:20px; width:100%; padding:15px; border-radius:20px; border:none; background:#333; color:white;">保存</button>
+    </div>
 </div>
 
 <div id="input-area">
-  <button onclick="document.getElementById('modal').style.display='flex'">⚙️</button>
-  <textarea id="msgInput" placeholder="メッセージを入力"></textarea>
-  <button id="sendBtn" onclick="send()" style="background:#00c300; color:white; border:none; border-radius:8px; padding:0 15px;">送信</button>
+    <img src="settings_icon.png" class="icon-btn" onclick="openModal()" alt="設定">
+    <textarea id="msgInput" placeholder="メッセージ..."></textarea>
+    <img src="send_icon.png" class="icon-btn" id="sendBtn" onclick="sendMessage()" alt="送信">
 </div>
 
-<script>
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbzpIL0d8KGQfskjX0lbbD8SJQwsJJPkN3jJBEqA6Q99hL2LfyTCWrz6Hkmvd_dXSDy5Lw/exec";
-  let config = JSON.parse(localStorage.getItem('sns_config') || '{}');
-
-  if (!config.name) document.getElementById('modal').style.display = 'flex';
-
-  function saveConfig() {
-    config = {
-      name: document.getElementById('name').value || '名無し',
-      icon: document.getElementById('icon').value || '👤',
-      color: document.getElementById('color').value,
-      secretCode: document.getElementById('secretCode').value || 'default'
-    };
-    localStorage.setItem('sns_config', JSON.stringify(config));
-    document.getElementById('modal').style.display = 'none';
-  }
-
-  async function loadMessages() {
-    try {
-      const res = await fetch(GAS_URL);
-      const data = await res.json();
-      const tl = document.getElementById('timeline');
-      tl.innerHTML = data.map(m => `
-        <div class="msg-card" style="border-left: 5px solid ${m[4]}">
-          <div class="msg-header"><span>${m[3]}</span><span>${m[1]}</span></div>
-          <div class="text">${m[2]}</div>
-          <div class="hash">ID: ${m[5]}</div>
-        </div>
-      `).join('');
-    } catch(e) { console.error("Error loading messages"); }
-  }
-
-  async function send() {
-    const msg = document.getElementById('msgInput').value;
-    if (!msg) return;
-    const btn = document.getElementById('sendBtn');
-    btn.disabled = true;
-
-    await fetch(GAS_URL, {
-      method: "POST",
-      body: JSON.stringify({...config, message: msg})
-    });
-
-    document.getElementById('msgInput').value = '';
-    btn.disabled = false;
-    loadMessages();
-  }
-
-  setInterval(loadMessages, 5000);
-  loadMessages();
-</script>
+<script src="script.js"></script>
 </body>
 </html>
