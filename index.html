@@ -8,33 +8,40 @@
 </head>
 <body>
 
-<div id="timeline"></div>
+<div id="timeline">
+    </div>
 
-<div id="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:100; display:flex; align-items:center; justify-content:center;">
-    <div style="background:white; padding:30px; border-radius:30px; width:80%; max-width:400px;">
-        <h2>設定</h2>
-        <p>名前:</p>
-        <input type="text" id="nameInput" style="width:100%; padding:15px; border-radius:15px; border:1px solid #ddd; font-size:18px;">
+<div id="modal" style="display:none;">
+    <div class="modal-content">
+        <h2>初期設定</h2>
+        <p>名前</p>
+        <input type="text" id="nameInput">
         
-        <p>メッセージの色:</p>
+        <p>メッセージの色</p>
         <div class="color-options">
-            <input type="radio" name="color" value="#e1f5fe" id="c1" checked><label for="c1" style="background:#e1f5fe;" class="color-circle"></label>
-            <input type="radio" name="color" value="#f1f8e9" id="c2"><label for="c2" style="background:#f1f8e9;" class="color-circle"></label>
-            <input type="radio" name="color" value="#fff9c4" id="c3"><label for="c3" style="background:#fff9c4;" class="color-circle"></label>
-            <input type="radio" name="color" value="#fce4ec" id="c4"><label for="c4" style="background:#fce4ec;" class="color-circle"></label>
+            <input type="radio" name="color" value="#e1f5fe" id="c1" checked>
+            <label for="c1" style="background:#e1f5fe;" class="color-circle"></label>
+            
+            <input type="radio" name="color" value="#f1f8e9" id="c2">
+            <label for="c2" style="background:#f1f8e9;" class="color-circle"></label>
+            
+            <input type="radio" name="color" value="#fff9c4" id="c3">
+            <label for="c3" style="background:#fff9c4;" class="color-circle"></label>
+            
+            <input type="radio" name="color" value="#fce4ec" id="c4">
+            <label for="c4" style="background:#fce4ec;" class="color-circle"></label>
         </div>
 
-        <p>なりすまし防止コード:</p>
-        <input type="password" id="codeInput" style="width:100%; padding:10px; border-radius:15px; border:1px solid #ddd;">
+        <p>なりすまし防止コード（英数字）</p>
+        <input type="password" id="codeInput" placeholder="適当な合言葉">
         
-        <button onclick="saveSettings()" style="margin-top:20px; width:100%; padding:15px; border-radius:20px; border:none; background:#333; color:white;">保存</button>
+        <button class="save-btn" onclick="saveSettings()">保存</button>
     </div>
 </div>
 
 <div id="footer-container">
     <div class="input-wrapper">
         <div id="current-user-name"></div>
-        
         <div id="input-bubble-ui" class="input-bubble-box">
             <img src="settings_icon.png" class="icon-btn" onclick="openModal()" alt="設定">
             <textarea id="msgInput" placeholder="メッセージを入力..."></textarea>
