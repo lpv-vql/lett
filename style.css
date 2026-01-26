@@ -1,12 +1,124 @@
+/* 全体のレイアウト */
+body {
+    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    background-color: #7494c0;
+    margin: 0;
+    padding-bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding-bottom: 80px; }
-#timeline { padding: 15px; max-width: 600px; margin: auto; }
-.msg-card { background: white; padding: 12px; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-.msg-header { display: flex; align-items: center; gap: 8px; font-weight: bold; margin-bottom: 4px; }
-.text { white-space: pre-wrap; font-size: 15px; }
-.hash { font-size: 10px; color: #999; text-align: right; margin-top: 5px; }
-#input-area { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 10px; display: flex; gap: 8px; border-top: 1px solid #ddd; }
-textarea { flex: 1; border: 1px solid #ccc; border-radius: 8px; padding: 8px; height: 36px; resize: none; }
-#modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 10; }
-.modal-content { background: white; padding: 20px; border-radius: 15px; width: 85%; max-width: 350px; }
-input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+#timeline {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px 10px;
+}
+
+/* メッセージカード */
+.msg-card {
+    background: white;
+    padding: 12px 16px;
+    border-radius: 18px;
+    margin-bottom: 15px;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    max-width: 85%;
+    /* 左側に寄せる設定 */
+    align-self: flex-start;
+}
+
+/* アイコンと名前 */
+.msg-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+
+.icon {
+    font-size: 24px;
+}
+
+.name {
+    font-weight: bold;
+    font-size: 13px;
+    color: #333;
+}
+
+/* 本文 */
+.text {
+    white-space: pre-wrap;
+    font-size: 15px;
+    color: #000;
+    line-height: 1.4;
+}
+
+/* ハッシュ表示（右下に配置） */
+.hash {
+    font-size: 9px;
+    color: #999;
+    text-align: right;
+    margin-top: 4px;
+    font-family: monospace;
+}
+
+/* 入力エリア */
+#input-area {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    max-width: 500px;
+    background: #fff;
+    padding: 10px;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    box-sizing: border-box;
+}
+
+textarea {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 10px 15px;
+    height: 40px;
+    font-size: 16px;
+    resize: none;
+    outline: none;
+    background: #f8f8f8;
+}
+
+/* ボタン類 */
+button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+#sendBtn {
+    color: #00c300;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 10px;
+}
+
+/* 設定モーダル */
+#modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    width: 80%;
+    max-width: 350px;
+}
