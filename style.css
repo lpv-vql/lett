@@ -221,5 +221,12 @@ body {
 
 .about-link {
     text-decoration: none;
+    text-align: center;
     color: #333;
+    font-weight: bold;
+}
+
+.about-link:hover {
+    text-decoration: underline;
+    color: #4d4d4d;
 }
