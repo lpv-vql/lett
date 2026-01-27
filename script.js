@@ -1,4 +1,5 @@
 const GAS_URL = "https://script.google.com/macros/s/AKfycbzpIL0d8KGQfskjX0lbbD8SJQwsJJPkN3jJBEqA6Q99hL2LfyTCWrz6Hkmvd_dXSDy5Lw/exec";
+const MAX_CHARS = 500; // 文字数制限
 
 // ローカルストレージから設定を読み込み
 let config = JSON.parse(localStorage.getItem('sns_config') || '{}');
@@ -20,6 +21,21 @@ function updateInputUI() {
     if (config.name) {
         nameLabel.innerText = config.name;
         inputBubble.style.backgroundColor = config.color;
+    }
+}
+
+// 文字数制限をチェックしてボタンの状態を変える
+function checkLimit() {
+    const textInput = document.getElementById('msgInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const len = textInput.value.length;
+    
+    if (len > MAX_CHARS) {
+        sendBtn.style.opacity = "0.2";
+        sendBtn.style.pointerEvents = "none";
+    } else {
+        sendBtn.style.opacity = "1";
+        sendBtn.style.pointerEvents = "auto";
     }
 }
 
@@ -47,7 +63,6 @@ async function loadMessages() {
             const date = new Date(m[0]).toLocaleString('ja-JP', {
                 month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
             });
-            // 空白が入らないように1行で連結
             return `<div class="msg-wrapper"><div class="msg-header">${m[1]}<span class="info-pop">ID: ${m[5]}<br>投稿: ${date}</span></div><div class="bubble" style="background-color: ${m[4]}">${m[2]}</div></div>`;
         }).join('');
     } catch (e) {
@@ -59,7 +74,9 @@ async function loadMessages() {
 async function sendMessage() {
     const textInput = document.getElementById('msgInput');
     const text = textInput.value.trim();
-    if (!text) return;
+    
+    // 空、または制限超過なら送信しない
+    if (!text || text.length > MAX_CHARS) return;
     
     const sendBtn = document.getElementById('sendBtn');
     sendBtn.style.opacity = "0.5";
@@ -71,17 +88,20 @@ async function sendMessage() {
             body: JSON.stringify({...config, message: text})
         });
         textInput.value = '';
+        checkLimit(); // 送信後にボタン状態をリセット
         await loadMessages();
     } catch (e) {
         alert("送信に失敗しました");
-    } finally {
-        sendBtn.style.opacity = "1";
-        sendBtn.style.pointerEvents = "auto";
+        checkLimit();
     }
 }
 
 // 初期化処理
 window.onload = () => {
+    const textInput = document.getElementById('msgInput');
+    // 入力のたびにチェックを走らせる
+    textInput.addEventListener('input', checkLimit);
+
     if (!config.name) {
         openModal();
     } else {
