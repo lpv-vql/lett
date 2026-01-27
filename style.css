@@ -14,8 +14,8 @@ body {
 /* 投稿一覧のコンテナ */
 #timeline {
     width: 100%;
-    max-width: 600px;
-    padding: 20px;
+    max-width: 800px;
+    padding: 20px auto;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -29,6 +29,7 @@ body {
     width: 95%;
     max-width: 580px;
     align-self: flex-start;
+    align-self: center;
 }
 
 /* 名前部分 */
@@ -92,7 +93,7 @@ body {
 
 .input-wrapper {
     width: 95%;
-    max-width: 580px;
+    max-width: 680px;
     display: flex;
     flex-direction: column;
 }
