@@ -55,7 +55,7 @@
         <div id="current-user-name"></div>
         <div id="input-bubble-ui" class="input-bubble-box">
             <img src="images/settings.svg" class="icon-btn" onclick="openModal()" alt="設定">
-            <textarea id="msgInput" placeholder="メッセージを入力..."></textarea>
+            <textarea id="msgInput" placeholder="メッセージを入力..." oninput="checkLimit()"></textarea>
             <img src="images/send.svg" class="icon-btn" id="sendBtn" onclick="sendMessage()" alt="送信">
         </div>
     </div>
