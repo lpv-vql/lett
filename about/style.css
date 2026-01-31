@@ -1,5 +1,6 @@
 body {
     font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    font-size: 18px;
     width: 95%;
     max-width: 900px;
     margin: 40px auto;
@@ -19,7 +20,6 @@ h2 {
 }
 
 ul, ol {
-  font-size: 18px;
   line-height: 1.8;
 }
 
