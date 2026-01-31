@@ -35,7 +35,7 @@ body {
 .msg-header {
     margin-bottom: 6px;
     margin-left: 12px;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
     position: relative;
     display: inline-block;
@@ -71,7 +71,7 @@ body {
 .bubble {
     padding: 20px 25px;
     border-radius: 20px;
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1.6;
     word-wrap: break-word;
     white-space: pre-wrap;
@@ -100,7 +100,7 @@ body {
 #current-user-name {
     margin-bottom: 6px;
     margin-left: 12px;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
 }
 
@@ -118,7 +118,7 @@ body {
     flex: 1;
     background: transparent;
     border: none;
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1.5;
     outline: none;
     resize: none;
