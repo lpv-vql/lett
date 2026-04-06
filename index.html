@@ -197,7 +197,17 @@
         </div>
       </div>
 
+      <div id="image-preview-container" style="display:none; margin-bottom:10px; position:relative; width:fit-content;">
+        <img id="image-preview" src="" style="max-width:200px; border-radius:8px; border:1px solid #ddd;">
+        <button onclick="clearImage()" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border-radius:50%; width:20px; height:20px; padding:0; line-height:18px; font-size:12px;">×</button>
+      </div>
+
       <textarea id="content" rows="3" placeholder="投稿を入力..." maxlength="1000"></textarea>
+
+      <div style="display:flex; gap:10px; margin-bottom:10px;">
+        <input type="file" id="image-input" accept="image/*" style="display:none;" onchange="previewImage(this)">
+        <button class="secondary" onclick="document.getElementById('image-input').click()" style="width:auto; margin:0;">画像を追加</button>
+      </div>
       
       <button id="submit-btn" onclick="submitPost(this)">投稿する</button>
       <button id="cancel-btn" class="btn-cancel" onclick="stopEdit()">キャンセル</button>
@@ -319,7 +329,7 @@
       document.getElementById('profile-display').style.display = 'flex';
     }
 
-function renderPost(p, isReply = false) {
+    function renderPost(p, isReply = false) {
       const div = document.createElement('div');
       div.className = 'post-card';
       if (p.is_hidden === "TRUE") div.classList.add('hidden-post');
@@ -335,6 +345,7 @@ function renderPost(p, isReply = false) {
       // ★ 追加：相対時間と詳細時間をここで定義
       const relativeTime = getRelativeTime(p.timestamp);
       const fullDate = new Date(p.timestamp).toLocaleString();
+      const imageHtml = p.image ? `<div style="margin-top:10px;"><img src="${p.image}" style="max-width:100%; border-radius:8px; cursor:pointer;" onclick="window.open('${p.image}')"></div>` : "";
 
       div.innerHTML = `
         ${repostHtml}
@@ -362,6 +373,7 @@ function renderPost(p, isReply = false) {
         </div>
         <div class="post-content" data-raw="${rawContent}">
           ${parseContent(p.content || "")}
+          ${imageHtml}
         </div>
         <div class="post-footer">
           <button class="secondary" id="btn-${uniqueKey}" onclick="toggleReplies('${postIdStr}', '${uniqueKey}')" 
@@ -470,7 +482,7 @@ function renderPost(p, isReply = false) {
       if (content.length === 0) { alert("本文を入力してください"); return; }
       if (content.length > 1000) { alert("本文は1000文字以内で入力してください"); return; }
 
-      const data = { displayName, userId, content, parentId: "" };
+      const data = { displayName, userId, content, image: selectedImageBase64, parentId: "" };
       const originalText = btn.innerText;
       btn.disabled = true;
       btn.innerText = "送信中...";
@@ -483,6 +495,7 @@ function renderPost(p, isReply = false) {
         if (res.success) {
           document.getElementById('content').value = '';
           hideProfileEdit(); 
+          clearImage();
           await loadTimeline();
         } else {
           alert("投稿に失敗しました: " + (res.error || "不明なエラー"));
@@ -715,6 +728,57 @@ function renderPost(p, isReply = false) {
       const newRelativePathQuery = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
       history.pushState(null, '', newRelativePathQuery);
     }
+
+    let selectedImageBase64 = ""; // 選択された画像を保持する変数
+
+    // 画像プレビューとBase64変換
+    function previewImage(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          // キャンバスを使ってリサイズ（スプレッドシートの制限対策）
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxSide = 600; // 最大辺を600pxに制限
+
+          if (width > height) {
+            if (width > maxSide) {
+              height *= maxSide / width;
+              width = maxSide;
+            }
+          } else {
+            if (height > maxSide) {
+              width *= maxSide / height;
+              height = maxSide;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // 圧縮してBase64化
+          selectedImageBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          
+          document.getElementById('image-preview').src = selectedImageBase64;
+          document.getElementById('image-preview-container').style.display = 'block';
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearImage() {
+      selectedImageBase64 = "";
+      document.getElementById('image-input').value = "";
+      document.getElementById('image-preview-container').style.display = 'none';
+    }
+    
   </script>
 </body>
 </html>
