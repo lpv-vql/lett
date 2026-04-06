@@ -33,7 +33,7 @@
       margin-bottom: 10px; 
       outline: none; 
     }
-    textarea { resize: vertical; height: 130px; }
+    textarea { resize: vertical; height: 130px; margin-bottom: 3px; }
     
     button { 
       background: #333; 
@@ -206,7 +206,9 @@
 
       <div style="display:flex; gap:10px; margin-bottom:10px;">
         <input type="file" id="image-input" accept="image/*" style="display:none;" onchange="previewImage(this)">
-        <button class="secondary" onclick="document.getElementById('image-input').click()" style="width:auto; margin:0;">画像を追加</button>
+        <button class="secondary" onclick="document.getElementById('image-input').click()" style="width:auto; margin:0;">
+          <span id="image-button-text">画像を追加</span>
+        </button>
       </div>
       
       <button id="submit-btn" onclick="submitPost(this)">投稿する</button>
@@ -778,6 +780,7 @@
           
           document.getElementById('image-preview').src = selectedImageBase64;
           document.getElementById('image-preview-container').style.display = 'block';
+          document.getElementById('image-button-text').innerText = "画像を変更";
         };
         img.src = e.target.result;
       };
@@ -788,6 +791,7 @@
       selectedImageBase64 = "";
       document.getElementById('image-input').value = "";
       document.getElementById('image-preview-container').style.display = 'none';
+      document.getElementById('image-button-text').innerText = "画像を追加";
     }
     
   </script>
