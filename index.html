@@ -218,7 +218,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
   <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbylR6w0U-fMGwHSggjdGw3jWR8F1eCCYoUGZskh6O6cpKwI7z12R3eIIggbcX6U0ZKo/exec"; 
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbyymrtbQ-2W3DDG_1fWqfV7AThlp_mpSdgcKdYZ1dNlEWvPWosjSYXr6LzRHlsuQLxx/exec"; 
     const md = window.markdownit({
       breaks: true,
       linkify: true,
@@ -595,7 +595,16 @@
       const card = document.getElementById(`card-${uniqueKey}`);
       const contentDiv = card.querySelector('.post-content');
       const rawContent = contentDiv.getAttribute('data-raw');
-  
+
+      const existingImg = card.querySelector('.post-content img');
+        if (existingImg) {
+          selectedImageBase64 = existingImg.src; // 既存の画像を保持
+          document.getElementById('image-preview').src = selectedImageBase64;
+          document.getElementById('image-preview-container').style.display = 'block';
+        } else {
+          clearImage(); // 画像がない投稿ならクリアしておく
+      }
+        
       contentField.value = rawContent;
       submitBtn.innerText = "更新する";
       submitBtn.onclick = function() { updatePost(postId, this); };
@@ -615,11 +624,12 @@
       submitBtn.onclick = () => submitPost(submitBtn);
       submitBtn.disabled = false;
       cancelBtn.style.display = "none";
+      clearImage();
     }
 
     async function updatePost(postId, btn) {
       const contentField = document.getElementById('content');
-      const data = { postId, userId: document.getElementById('userId').value, content: contentField.value };
+      const data = { postId, userId: document.getElementById('userId').value, content: contentField.value, image: selectedImageBase64 };
       if (!data.content.trim()) return;
 
       btn.disabled = true;
@@ -629,6 +639,7 @@
         const res = await callGas("editPost", data);
         if (res.success) {
           stopEdit();
+          clearImage();
           await loadTimeline();
         } else {
           alert(res.error);
