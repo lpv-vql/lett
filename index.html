@@ -197,9 +197,9 @@
         </div>
       </div>
 
-      <div id="image-preview-container" style="display:none; margin-bottom:10px; position:relative; width:fit-content;">
-        <img id="image-preview" src="" style="max-width:200px; border-radius:8px; border:1px solid #ddd;">
-        <button onclick="clearImage()" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border-radius:50%; width:20px; height:20px; padding:0; line-height:18px; font-size:12px;">×</button>
+      <div id="image-preview-container" style="display:none; margin-bottom:5px; position:relative; width:fit-content;">
+        <img id="image-preview" src="" style="max-width:80px; border-radius:2px; border:1px solid #eee;">
+        <button onclick="clearImage()" style="position:absolute; top:-5px; right:-5px; background:#fafafa; color:#333; border-radius:50%; width:20px; height:20px; padding:0; line-height:18px; font-size:12px;">×</button>
       </div>
 
       <textarea id="content" rows="3" placeholder="投稿を入力..." maxlength="1000"></textarea>
@@ -345,7 +345,7 @@
       // ★ 追加：相対時間と詳細時間をここで定義
       const relativeTime = getRelativeTime(p.timestamp);
       const fullDate = new Date(p.timestamp).toLocaleString();
-      const imageHtml = p.image ? `<div style="margin-top:10px;"><img src="${p.image}" style="max-width:100%; border-radius:8px; cursor:pointer;" onclick="window.open('${p.image}')"></div>` : "";
+      const imageHtml = p.image ? `<div style="margin-top:10px;"><img src="${p.image}" style="max-width:100%; border-radius:2px; cursor:pointer;" onclick="window.open('${p.image}')"></div>` : "";
 
       div.innerHTML = `
         ${repostHtml}
