@@ -363,8 +363,7 @@ function renderPost(p, depth = 0) {
       } else if (depth > 0 && depth <= 10) {
         // 10階層まではインデントを作る
         div.style.marginLeft = "10px";
-        // 階層をわかりやすくするための細い線（任意。不要なら none に）
-        div.style.borderLeft = "1px solid #eee"; 
+        div.style.borderLeft = "none"; 
       } else {
         // 11階層目以降は、親のインデントも線の影響も受けないようにリセット
         div.style.marginLeft = "0px";
