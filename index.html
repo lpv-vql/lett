@@ -111,7 +111,7 @@
     .resource a:hover { color: #007bff; text-decoration: underline; }
 
     /* --- 投稿カード --- */
-    .post-card { border-bottom: 1px solid #eee; padding: 15px 0; position: relative; background: #fff; }
+    .post-card { box-sizing: border-box; max-width: 100%; border-bottom: 1px solid #eee; padding: 15px 0; position: relative; background: #fff; }
     .post-card:has(.post-menu[style*="display: block"]) { z-index: 100; }
     .post-card.hidden-post { opacity: 0.7; background: #fdfdfd; }
     
@@ -334,6 +334,17 @@
     function renderPost(p, isReply = false) {
       const div = document.createElement('div');
       div.className = 'post-card';
+
+      // ネストが10未満の時だけインデントを適用（1段につき 15px など）
+      // 10以上の場合は一律で同じインデント（または0）にする
+      const indentSize = depth < 10 ? depth * 15 : 10 * 15; 
+      div.style.marginLeft = `${indentSize}px`;
+      
+      // ネストが深い場合に「これ以上はインデントしない」という目印の枠線をつけてもOK
+      if (depth >= 10) {
+        div.style.borderLeft = "3px double #ccc"; 
+      }
+      
       if (p.is_hidden === "TRUE") div.classList.add('hidden-post');
   
       const uniqueKey = p.is_repost ? `rp-${p.post_id}-${new Date(p.timestamp).getTime()}` : p.post_id;
@@ -378,7 +389,8 @@
           ${imageHtml}
         </div>
         <div class="post-footer">
-          <button class="secondary" id="btn-${uniqueKey}" onclick="toggleReplies('${postIdStr}', '${uniqueKey}')" 
+          <button class="secondary" id="btn-${uniqueKey}" 
+                  onclick="toggleReplies('${postIdStr}', '${uniqueKey}', ${depth})" 
                   style="display: ${p.replyCount > 0 ? 'inline-block' : 'none'};">
             返信を表示 (${p.replyCount || 0})
           </button>
@@ -393,19 +405,25 @@
       return div;
     }
 
-    async function toggleReplies(postId, uniqueKey) {
+    async function toggleReplies(parentId, uniqueKey, currentDepth = 0) {
       const container = document.getElementById(`replies-${uniqueKey}`);
-      const btn = document.getElementById(`btn-${uniqueKey}`);
       if (container.style.display === 'block') {
         container.style.display = 'none';
-        if (btn) btn.innerText = `返信を表示 (${btn.innerText.match(/\d+/)})`;
-      } else {
-        container.innerHTML = '読み込み中...';
-        container.style.display = 'block';
-        if (btn) btn.innerText = `返信を非表示 (${btn.innerText.match(/\d+/)})`;
-        const userId = document.getElementById('userId').value;
-        const replies = await callGas("fetchPosts", { parentId: postId, userId: userId });
-        renderReplyList(uniqueKey, replies);
+        return;
+      }
+
+      container.innerHTML = '<div class="loading">返信を読み込み中...</div>';
+      container.style.display = 'block';
+
+      try {
+        const replies = await callGas("fetchPosts", { parentId: parentId });
+        container.innerHTML = '';
+        replies.forEach(r => {
+          // 子要素には現在の深さ + 1 を渡す
+          container.appendChild(renderPost(r, currentDepth + 1));
+        });
+      } catch (e) {
+        container.innerHTML = '読み込み失敗';
       }
     }
 
