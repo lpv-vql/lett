@@ -153,7 +153,7 @@
 }
 
 /* 10階層目より深い場所にある返信コンテナの余白を完全にゼロにする */
-[data-depth="5"] .reply-container {
+[data-depth="10"] .reply-container {
   margin-left: 0 !important;
   padding-left: 0 !important;
   border-left: none !important;
@@ -161,10 +161,10 @@
 
 /* 11階層目以降のカード単体でも線を消す */
 .post-card[data-depth] {
-  /* 共通設定：6以上の数値が入った時のために */
+  /* 共通設定：11以上の数値が入った時のために */
 }
 
-/* 念のため、6階層目以降のカードが親のボーダーを拾わないようにする */
+/* 念のため、11階層目以降のカードが親のボーダーを拾わないようにする */
 .post-card:nth-child(n) {
   box-sizing: border-box;
 }
@@ -360,9 +360,9 @@ function renderPost(p, depth = 0) {
       if (depth === 0) {
         div.style.marginLeft = "0px";
         div.style.borderLeft = "none";
-      } else if (depth > 0 && depth <= 5) {
+      } else if (depth > 0 && depth <= 10) {
         // 5階層まではインデントを作る
-        div.style.marginLeft = "10px";
+        div.style.marginLeft = "5px";
         div.style.borderLeft = "none"; 
       } else {
         // 11階層目以降は、親のインデントも線の影響も受けないようにリセット
@@ -449,7 +449,7 @@ function renderPost(p, depth = 0) {
         replies.forEach(r => {
           const nextDepth = currentDepth + 1;
           
-          // 6階層目以降になる場合は、インデントを増やさない
+          // 11階層目以降になる場合は、インデントを増やさない
           const postElement = renderPost(r, nextDepth);
           container.appendChild(postElement);
         });
