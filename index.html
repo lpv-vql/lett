@@ -148,7 +148,26 @@
     .quote-card-error { padding: 10px; border: 1px dashed #ddd; color: #999; font-size: 0.8em; }
 
     .reply-container { border-left: 2px solid #eee; margin-left: 0; padding-left: 14px; display: none; }
-    [data-depth="10"] .reply-container { margin-left: 0 !important; padding-left: 0 !important; }
+[data-depth="10"] {
+  border-left: none !important; /* 10階層目自体の線を消す（重なり防止） */
+}
+
+/* 10階層目より深い場所にある返信コンテナの余白を完全にゼロにする */
+[data-depth="10"] .reply-container {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  border-left: none !important;
+}
+
+/* 11階層目以降のカード単体でも線を消す */
+.post-card[data-depth] {
+  /* 共通設定：11以上の数値が入った時のために */
+}
+
+/* 念のため、11階層目以降のカードが親のボーダーを拾わないようにする */
+.post-card:nth-child(n) {
+  box-sizing: border-box;
+}
     .reply-form-wrapper { margin: 10px 0; padding: 10px; border: 1px solid #eee; background: #fafafa; }
     .form-row { display: flex; gap: 10px; }
     
@@ -332,17 +351,25 @@
       document.getElementById('profile-display').style.display = 'flex';
     }
 
-    function renderPost(p, depth = 0) {
+function renderPost(p, depth = 0) {
       const div = document.createElement('div');
       div.className = 'post-card';
       div.setAttribute('data-depth', depth);
 
-      // 0層目は0px、1〜10層目は一律10px（親の内側に入るため階段状になる）
-      // 11層目以降は0px（10層目と同じ位置に留まる）
+      // --- インデントと線の制御 ---
       if (depth === 0) {
         div.style.marginLeft = "0px";
+        div.style.borderLeft = "none";
+      } else if (depth > 0 && depth <= 10) {
+        // 10階層まではインデントを作る
+        div.style.marginLeft = "10px";
+        // 階層をわかりやすくするための細い線（任意。不要なら none に）
+        div.style.borderLeft = "1px solid #eee"; 
       } else {
-        div.style.marginLeft = depth <= 10 ? "10px" : "0px";
+        // 11階層目以降は、親のインデントも線の影響も受けないようにリセット
+        div.style.marginLeft = "0px";
+        div.style.borderLeft = "none";
+        div.style.paddingLeft = "0px";
       }
       
       if (p.is_hidden === "TRUE") div.classList.add('hidden-post');
