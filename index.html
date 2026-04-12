@@ -331,7 +331,7 @@
       document.getElementById('profile-display').style.display = 'flex';
     }
 
-    function renderPost(p, isReply = false) {
+    function renderPost(p, depth = 0) {
       const div = document.createElement('div');
       div.className = 'post-card';
 
@@ -355,7 +355,7 @@
       const repostHtml = p.is_repost ? `<div class="repost-label">ID:${p.reposter_hash} によるリポスト</div>` : "";
       const rawContent = p.content ? p.content.replace(/"/g, '&quot;') : "";
       
-      // ★ 追加：相対時間と詳細時間をここで定義
+      // 相対時間と詳細時間をここで定義
       const relativeTime = getRelativeTime(p.timestamp);
       const fullDate = new Date(p.timestamp).toLocaleString();
       const imageHtml = p.image ? `<div style="margin-top:10px;"><img src="${p.image}" style="max-width:100%; border-radius:2px; cursor:pointer;" onclick="window.open('${p.image}')"></div>` : "";
