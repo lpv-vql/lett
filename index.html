@@ -337,7 +337,8 @@
 
       // ネストが10未満の時だけインデントを適用（1段につき 15px など）
       // 10以上の場合は一律で同じインデント（または0）にする
-      const indentSize = depth < 10 ? depth * 15 : 10 * 15; 
+      const indentLevel = Math.min(depth, 10);
+      const indentSize = indentLevel * 15; 
       div.style.marginLeft = `${indentSize}px`;
       
       // ネストが深い場合に「これ以上はインデントしない」という目印の枠線をつけてもOK
@@ -419,14 +420,14 @@
         const replies = await callGas("fetchPosts", { parentId: parentId });
         container.innerHTML = '';
         replies.forEach(r => {
-          // 子要素には現在の深さ + 1 を渡す
+          // ★ 親の深さ(currentDepth)に 1 を足して子供を描画
           container.appendChild(renderPost(r, currentDepth + 1));
         });
       } catch (e) {
         container.innerHTML = '読み込み失敗';
       }
     }
-
+    
     function renderReplyList(uniqueKey, replies) {
       const container = document.getElementById(`replies-${uniqueKey}`);
       container.innerHTML = '';
@@ -459,18 +460,25 @@
       try {
         const res = await callGas("addNewPost", data);
         if (res.success) {
+          // 返信フォームを閉じる
           document.getElementById(`reply-form-container-${uniqueKey}`).innerHTML = "";
-          const btn = document.getElementById(`btn-${uniqueKey}`);
-          if (btn) {
-            btn.style.display = "inline-block";
-            const currentCount = parseInt(btn.innerText.match(/\d+/) || [0]);
-            btn.innerText = `返信を非表示 (${currentCount + 1})`;
-          }
+          
+          // 返信コンテナを表示状態にする
           const container = document.getElementById(`replies-${uniqueKey}`);
           container.style.display = 'block';
+
+          // 親要素の現在の深さを取得（CSSのmarginLeftから逆算するか、固定で渡す）
+          // 最も確実なのは、再度 loadTimeline するか、以下のように再描画すること
           const userId = document.getElementById('userId').value;
           const replies = await callGas("fetchPosts", { parentId: postId, userId: userId });
-          renderReplyList(uniqueKey, replies);
+          
+          // 一旦コンテナを空にして、深さを 1 段深くして再描画
+          // (厳密には親のdepthを知る必要がありますが、簡易的に+1階層として表示)
+          container.innerHTML = '';
+          replies.forEach(r => container.appendChild(renderPost(r, 1))); 
+          
+          // タイムライン全体も更新してカウントを反映
+          await loadTimeline(); 
         }
       } catch (e) {
         alert("送信失敗");
