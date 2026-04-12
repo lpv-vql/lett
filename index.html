@@ -343,7 +343,7 @@
       if (depth === 0) {
         div.style.marginLeft = "0px";
       } else if (depth > 0 && depth <= 10) {
-        div.style.marginLeft = "15px";
+        div.style.marginLeft = "10px";
       } else {
         div.style.marginLeft = "0px";
       }
@@ -415,7 +415,9 @@
     }
 
     async function toggleReplies(parentId, uniqueKey, currentDepth = 0) {
-      const container = document.getElementById(`replies-${uniqueKey}`);
+      // 1. ターゲットとなるコンテナを特定
+      let container = document.getElementById(`replies-${uniqueKey}`);
+      
       if (container.style.display === 'block') {
         container.style.display = 'none';
         return;
@@ -427,15 +429,24 @@
       try {
         const replies = await callGas("fetchPosts", { parentId: parentId });
         container.innerHTML = '';
+        
         replies.forEach(r => {
-          // 親の深さ(currentDepth)に 1 を足して子供を描画
-          container.appendChild(renderPost(r, currentDepth + 1));
+          // 次の階層の深さを計算
+          const nextDepth = currentDepth + 1;
+          
+          // もし次が11階層目以降なら、インデント用のコンテナを使わず、見た目上の深さを10で固定して描画する
+          const renderedDepth = nextDepth > 10 ? 10 : nextDepth;
+          
+          const postElement = renderPost(r, renderedDepth);
+          
+          // ここが重要：10階層目以降の返信は「さらに内側」に入れず、10階層目の投稿と同じ高さ（平坦）に並べる
+          container.appendChild(postElement);
         });
       } catch (e) {
         container.innerHTML = '読み込み失敗';
       }
     }
-
+    
     function renderReplyList(uniqueKey, replies, parentDepth) {
       const container = document.getElementById(`replies-${uniqueKey}`);
       container.innerHTML = '';
