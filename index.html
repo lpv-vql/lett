@@ -334,14 +334,24 @@
     function renderPost(p, depth = 0) {
       const div = document.createElement('div');
       div.className = 'post-card';
-      div.setAttribute('data-depth', depth); // ★現在の深さを記憶させる
+      div.setAttribute('data-depth', depth);
 
-      const indentLevel = Math.min(depth, 10);
-      const indentSize = indentLevel * 15; 
-      div.style.marginLeft = `${indentSize}px`;
-      
+      // --- インデントの計算ロジックを修正 ---
+      // depthが0（最上位）なら 0px
+      // depthが1〜10なら一律 15px (親の内側に入るので、15px固定で階段状になる)
+      // depthが11以上なら 0px (これ以上右にズレないようにする)
+      if (depth === 0) {
+        div.style.marginLeft = "0px";
+      } else if (depth > 0 && depth <= 10) {
+        div.style.marginLeft = "15px";
+      } else {
+        div.style.marginLeft = "0px";
+      }
+
+      // 10階層を超えたら左線を出して「深いネスト」であることを示す
       if (depth >= 10) {
-        div.style.borderLeft = "3px double #ccc"; 
+        div.style.borderLeft = "3px double #ccc";
+        div.style.paddingLeft = "10px"; // 文字が線に被らないように
       }
       
       if (p.is_hidden === "TRUE") div.classList.add('hidden-post');
