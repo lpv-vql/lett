@@ -336,12 +336,12 @@
       div.className = 'post-card';
       div.setAttribute('data-depth', depth);
 
-      // 0層目は0px、1〜10層目は一律15px（親の内側に入るため階段状になる）
+      // 0層目は0px、1〜10層目は一律10px（親の内側に入るため階段状になる）
       // 11層目以降は0px（10層目と同じ位置に留まる）
       if (depth === 0) {
         div.style.marginLeft = "0px";
       } else {
-        div.style.marginLeft = depth <= 10 ? "15px" : "0px";
+        div.style.marginLeft = depth <= 10 ? "10px" : "0px";
       }
       
       if (p.is_hidden === "TRUE") div.classList.add('hidden-post');
