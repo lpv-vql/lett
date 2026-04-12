@@ -336,22 +336,12 @@
       div.className = 'post-card';
       div.setAttribute('data-depth', depth);
 
-      // --- インデントの計算ロジックを修正 ---
-      // depthが0（最上位）なら 0px
-      // depthが1〜10なら一律 15px (親の内側に入るので、15px固定で階段状になる)
-      // depthが11以上なら 0px (これ以上右にズレないようにする)
+      // 0層目は0px、1〜10層目は一律15px（親の内側に入るため階段状になる）
+      // 11層目以降は0px（10層目と同じ位置に留まる）
       if (depth === 0) {
         div.style.marginLeft = "0px";
-      } else if (depth > 0 && depth <= 10) {
-        div.style.marginLeft = "10px";
       } else {
-        div.style.marginLeft = "0px";
-      }
-
-      // 10階層を超えたら左線を出して「深いネスト」であることを示す
-      if (depth >= 10) {
-        div.style.borderLeft = "3px double #ccc";
-        div.style.paddingLeft = "10px"; // 文字が線に被らないように
+        div.style.marginLeft = depth <= 10 ? "15px" : "0px";
       }
       
       if (p.is_hidden === "TRUE") div.classList.add('hidden-post');
@@ -415,8 +405,7 @@
     }
 
     async function toggleReplies(parentId, uniqueKey, currentDepth = 0) {
-      // 1. ターゲットとなるコンテナを特定
-      let container = document.getElementById(`replies-${uniqueKey}`);
+      const container = document.getElementById(`replies-${uniqueKey}`);
       
       if (container.style.display === 'block') {
         container.style.display = 'none';
@@ -431,15 +420,10 @@
         container.innerHTML = '';
         
         replies.forEach(r => {
-          // 次の階層の深さを計算
           const nextDepth = currentDepth + 1;
           
-          // もし次が11階層目以降なら、インデント用のコンテナを使わず、見た目上の深さを10で固定して描画する
-          const renderedDepth = nextDepth > 10 ? 10 : nextDepth;
-          
-          const postElement = renderPost(r, renderedDepth);
-          
-          // ここが重要：10階層目以降の返信は「さらに内側」に入れず、10階層目の投稿と同じ高さ（平坦）に並べる
+          // 11階層目以降になる場合は、インデントを増やさない
+          const postElement = renderPost(r, nextDepth);
           container.appendChild(postElement);
         });
       } catch (e) {
