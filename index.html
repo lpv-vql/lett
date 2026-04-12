@@ -334,14 +334,12 @@
     function renderPost(p, depth = 0) {
       const div = document.createElement('div');
       div.className = 'post-card';
+      div.setAttribute('data-depth', depth); // ★現在の深さを記憶させる
 
-      // ネストが10未満の時だけインデントを適用（1段につき 15px など）
-      // 10以上の場合は一律で同じインデント（または0）にする
       const indentLevel = Math.min(depth, 10);
       const indentSize = indentLevel * 15; 
       div.style.marginLeft = `${indentSize}px`;
       
-      // ネストが深い場合に「これ以上はインデントしない」という目印の枠線をつけてもOK
       if (depth >= 10) {
         div.style.borderLeft = "3px double #ccc"; 
       }
@@ -413,25 +411,25 @@
         return;
       }
 
-      container.innerHTML = '<div class="loading">返信を読み込み中...</div>';
+      container.innerHTML = '<div class="loading">読み込み中...</div>';
       container.style.display = 'block';
 
       try {
         const replies = await callGas("fetchPosts", { parentId: parentId });
         container.innerHTML = '';
         replies.forEach(r => {
-          // ★ 親の深さ(currentDepth)に 1 を足して子供を描画
+          // 親の深さ(currentDepth)に 1 を足して子供を描画
           container.appendChild(renderPost(r, currentDepth + 1));
         });
       } catch (e) {
         container.innerHTML = '読み込み失敗';
       }
     }
-    
-    function renderReplyList(uniqueKey, replies) {
+
+    function renderReplyList(uniqueKey, replies, parentDepth) {
       const container = document.getElementById(`replies-${uniqueKey}`);
       container.innerHTML = '';
-      replies.forEach(r => container.appendChild(renderPost(r, true)));
+      replies.forEach(r => container.appendChild(renderPost(r, parentDepth + 1)));
     }
 
     function showReplyForm(postId, uniqueKey) {
@@ -460,24 +458,23 @@
       try {
         const res = await callGas("addNewPost", data);
         if (res.success) {
-          // 返信フォームを閉じる
+          // ★ 親投稿の深さを取得する
+          const parentCard = document.getElementById(`card-${uniqueKey}`);
+          const parentDepth = parseInt(parentCard.getAttribute('data-depth') || "0");
+
           document.getElementById(`reply-form-container-${uniqueKey}`).innerHTML = "";
-          
-          // 返信コンテナを表示状態にする
           const container = document.getElementById(`replies-${uniqueKey}`);
           container.style.display = 'block';
 
-          // 親要素の現在の深さを取得（CSSのmarginLeftから逆算するか、固定で渡す）
-          // 最も確実なのは、再度 loadTimeline するか、以下のように再描画すること
           const userId = document.getElementById('userId').value;
           const replies = await callGas("fetchPosts", { parentId: postId, userId: userId });
           
-          // 一旦コンテナを空にして、深さを 1 段深くして再描画
-          // (厳密には親のdepthを知る必要がありますが、簡易的に+1階層として表示)
-          container.innerHTML = '';
-          replies.forEach(r => container.appendChild(renderPost(r, 1))); 
+          // ★ 正しい深さを渡して再描画
+          renderReplyList(uniqueKey, replies, parentDepth);
           
-          // タイムライン全体も更新してカウントを反映
+          // タイムライン全体も更新（カウント更新のため）
+          // ※ loadTimelineを呼ぶと全画面リロードになるため、カウントだけ書き換えるのが理想ですが、
+          // 一旦確実な方法としてそのままにします。
           await loadTimeline(); 
         }
       } catch (e) {
