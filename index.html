@@ -194,27 +194,40 @@
   position: relative;
 }
 
-/* 下部のフェードアウト */
+/* 下部のフェードアウト（ボタンに被らないように調整） */
 .post-content.is-truncated::after {
   content: "";
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 50px;
-  background: linear-gradient(transparent, white);
+  height: 80px; /* グラデーションの範囲 */
+  /* 背景色を白から透明にする（サイトの背景色が白の場合） */
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.9)) !important;
   pointer-events: none;
+  z-index: 1; /* コンテンツより上、ボタンより下 */
 }
 
-/* ボタンの見た目 */
+/* 続きを読むボタン（一番上に持ってくる） */
 .read-more-btn {
+  position: relative;
+  z-index: 10; /* グラデーションより上に配置 */
   width: 100%;
-  padding: 10px;
-  background: #eee;
-  border: none;
+  padding: 12px;
+  background: #f0f2f5; /* 少し濃いめのグレーにして視認性を上げる */
+  border: 1px solid #ddd;
+  color: #007bff;
   cursor: pointer;
+  font-size: 14px;
   font-weight: bold;
-  margin-bottom: 10px;
+  display: block;
+  margin-top: -5px; /* コンテンツとの隙間を埋める */
+  border-radius: 0 0 8px 8px; /* 角を丸くする場合 */
+}
+
+.read-more-btn:hover {
+  background: #e4e6e9;
+  color: #0056b3;
 }
   </style>
 </head>
