@@ -180,48 +180,45 @@
       50% { opacity: 1; }
       100% { opacity: 0.5; }
     }
-    /* 投稿本文のコンテナ */
+/* 投稿内容のコンテナ */
 .post-content {
-  position: relative;
-  max-height: none; /* デフォルトは制限なし */
   overflow: hidden;
-  transition: max-height 0.3s ease;
+  position: relative;
+  max-height: none; 
 }
 
-/* 制限がかかっている状態 */
+/* 制限がかかっている時の状態（高さを強制固定） */
 .post-content.is-truncated {
-  max-height: 300px; /* ここで高さを制限 */
+  max-height: 300px !important; 
 }
 
-/* グラデーションのマスク（続きを読むの手前に表示） */
+/* グラデーション */
 .post-content.is-truncated::after {
   content: "";
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 60px;
-  background: linear-gradient(transparent, white); /* 背景色に合わせて調整 */
+  height: 80px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1)) !important;
   pointer-events: none;
+  z-index: 5;
 }
 
-/* 「続きを読む」ボタンのスタイル */
+/* 続きを読むボタン */
 .read-more-btn {
-  display: block;
   width: 100%;
-  padding: 8px;
-  text-align: center;
-  background: #f8f9fa;
-  border: 1px solid #ddd;
-  border-top: none;
+  padding: 12px;
+  background: #f0f2f5;
+  border: none;
+  border-top: 1px solid #ddd;
   color: #007bff;
   cursor: pointer;
-  font-size: 0.9em;
+  font-size: 14px;
   font-weight: bold;
-}
-
-.read-more-btn:hover {
-  background: #e9ecef;
+  display: block;
+  position: relative;
+  z-index: 10;
 }
   </style>
 </head>
@@ -471,7 +468,8 @@ function renderPost(p, depth = 0) {
         <div id="reply-form-container-${uniqueKey}"></div>
         <div class="reply-container" id="replies-${uniqueKey}"></div>
       `;
-      setTimeout(() => checkContentHeight(uniqueKey), 500);
+      setTimeout(() => checkContentHeight(uniqueKey), 1000);
+      setTimeout(() => checkContentHeight(uniqueKey), 3000);
       return div;
     }
 
@@ -903,21 +901,26 @@ function renderPost(p, depth = 0) {
       const wrapper = document.getElementById(`read-more-wrapper-${uniqueKey}`);
       if (!content || !wrapper) return;
 
-      const maxHeight = 300; // CSSと合わせて設定
+      const maxHeight = 300; 
+      const actualHeight = content.scrollHeight;
 
-      // 実際の高さが制限値を超えていたら、クラスを付与してボタンを表示
-      if (content.scrollHeight > maxHeight + 50) { // わずかな超過は許容
+      // デバッグ用：開発者ツールのコンソールで数値が見れます
+      console.log(`Post ${uniqueKey}: Height is ${actualHeight}px`);
+
+      // 既にボタンがある場合は二重に作らない
+      if (wrapper.innerHTML !== "") return;
+
+      if (actualHeight > maxHeight + 20) {
         content.classList.add('is-truncated');
-        wrapper.innerHTML = `<button class="read-more-btn" onclick="expandContent('${uniqueKey}')">すべて表示</button>`;
+        wrapper.innerHTML = `<button class="read-more-btn" onclick="expandContent('${uniqueKey}')">すべて表示を表示</button>`;
       }
     }
 
     function expandContent(uniqueKey) {
       const content = document.getElementById(`content-${uniqueKey}`);
       const wrapper = document.getElementById(`read-more-wrapper-${uniqueKey}`);
-      
-      content.classList.remove('is-truncated'); // 制限解除
-      wrapper.innerHTML = ""; // ボタンを消去
+      if (content) content.classList.remove('is-truncated');
+      if (wrapper) wrapper.innerHTML = "";
     }
     
   </script>
