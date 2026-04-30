@@ -493,6 +493,22 @@ button.secondary {
     color: #007bff;
     text-decoration: underline;
 }
+
+code {
+  background-color: #f4f4f4;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+blockquote {
+  margin: 1.5em 10px;
+  padding: 1em 20px;
+  background-color: #f9f9f9;
+  border-left: 5px solid #ccc;
+  color: #333;
+  line-height: 1.6;
+}
+
   </style>
 </head>
 <body>
@@ -1160,20 +1176,16 @@ button.secondary {
     }
 
     function checkContentHeight(uniqueKey) {
-      // そもそも呼ばれているか確認
-      console.log("Checking height for:", uniqueKey);
-      
+
       const content = document.getElementById(`content-${uniqueKey}`);
       const wrapper = document.getElementById(`read-more-wrapper-${uniqueKey}`);
       
       if (!content || !wrapper) {
-        console.log("Elements not found for:", uniqueKey);
         return;
       }
 
       const maxHeight = 300; 
       const actualHeight = content.scrollHeight;
-      console.log(`Height of ${uniqueKey}: ${actualHeight}px`);
 
       if (actualHeight > maxHeight + 10) {
         if (wrapper.innerHTML === "") { // 重複防止
