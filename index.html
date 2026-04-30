@@ -494,10 +494,29 @@ button.secondary {
     text-decoration: underline;
 }
 
-code {
+/* ==========================================
+   Markdown
+   ========================================== */
+
+/* 1. インラインコード（文章中） */
+:not(pre) > code {
   background-color: #f4f4f4;
   padding: 2px 4px;
   border-radius: 4px;
+  /* 改行時に背景が途切れるのを防ぐ */
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* 2. コードブロック（``` で囲った塊） */
+pre > code {
+  display: block;        /* ブロックとして表示 */
+  background-color: #f4f4f4;
+  padding: 1em;          /* ブロック用の広い余白 */
+  border-radius: 4px;
+  overflow-x: auto;      /* 横スクロール可能に */
+  white-space: pre;      /* 改行をそのまま表示 */
+  line-height: 1.5;
 }
 
 blockquote {
@@ -513,9 +532,9 @@ blockquote::before {
   left: 0;
   top: 0;
   bottom: 0;
-  width: 5px;
+  width: 4px;
   background-color: #ccc;
-  border-radius: 5px;
+  border-radius: 4px;
 }
 
 
